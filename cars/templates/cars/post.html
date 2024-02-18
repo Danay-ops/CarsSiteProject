@@ -1,0 +1,18 @@
+{% extends 'cars/index.html' %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<style>
+  .content {
+  width: 70%;
+  margin: 0 auto; /* Центрирует блок по горизонтали */
+}
+</style>
+{% if post.photo %}
+<div style="text-align: center;">
+  <img style="width: 70%; height: auto; " src="{{ post.photo.url }}">
+</div>
+<div class="content" style="text-alight: center;">
+  {{content}}
+</div>
+{% endif %}
+{% endblock %}

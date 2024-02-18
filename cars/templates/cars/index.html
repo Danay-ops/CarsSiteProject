@@ -1,0 +1,155 @@
+{% load static %}
+{% load carstags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+ <link href="{% static 'cars/css/styles.css' %}" rel="stylesheet">
+
+
+    <title>{{ title }}</title>
+</head>
+<body>
+
+<header class="p-3 bg-dark text-white">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+          <svg class="bi me-2" width="40" height="32" role="img" ></svg>
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link px-2 text-white" href="{% url 'home' %}">Главная</a>
+          </li>
+          {% for el in menu %}
+            {% if not forloop.last %}
+                <li class="nav-item">
+            {% else %}
+                <li class="nav-item last">
+            {% endif %}
+                <a href="{% url el.url_name %}" class="nav-link px-2 text-white my-link">{{ el.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+            {% if user.is_authenticated %}
+        <div class="text-end">
+            <li class="last"><a href="{% url 'users:profile' %}">{{ user.username}}</a> | <a href="{% url 'users:logout' %}">Выйти</a> </li>
+            {% else %}
+            <button type="button" class="btn btn-warning me-2" onclick="location.href='{% url 'users:login' %}'">Войти   </button>
+            <button type="button" class="btn btn-warning me-2" onclick="location.href='{% url 'users:register' %}'"> Регистрация </button>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+</header>
+
+
+<!--
+<ul class="nav nav-fill">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Главная страница</a>
+    </li>
+-->
+
+
+
+<!--
+    <ul class="nav nav-fill">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">Главная страница</a>
+    </li>
+    {% for el in menu %}
+        {% if not forloop.last %}
+            <li class="nav-item">
+        {% else %}
+            <li class="nav-item last">
+        {% endif %}
+            <a class="nav-link" href="{% url el.url_name %}">{{ el.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+-->
+
+
+
+  {% block content %}
+<style>
+    .categories {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.categories a {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.categories a:hover {
+    background-color: #ccc;
+}
+
+     .rounded-card {
+    border-radius: 15px;
+}
+
+.my-custom-image {
+    transition: transform 0.3s ease-in-out;
+     transition: 1s; /* Время эффекта */
+    display: block;
+}
+
+.my-custom-image:hover {
+    transform: scale(1.1);
+}
+
+</style>
+
+<div class="categories">
+    {% show_categories %}
+</div>
+
+
+   <div class="container-fluid">
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-md-4">
+                <div class="card mb-3 rounded-card"> <!-- Add the "rounded-card" class here -->
+                    <div class="card-body">
+                        <p>автор: {{ post.author.username|default:"unknown"}}</p>
+                        <h5 class="card-title"><a class="nav-link" href="{{ post.get_absolute_url }}">{{ post.title }}</a></h5>
+                        {% if post.photo %}
+                            <img class="img-fluid my-custom-image hover-effect" src="{{ post.photo.url }}">
+                        {% endif %}
+                        <p class="card-text">{{ post.content |truncatechars:100 }}</p>
+                        <p class="card-link"><a href="{{ post.get_absolute_url }}" class="btn btn-outline-dark">Читать пост</a></p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+<!-- Конец блока контент -->
+
+{% block navigation %}
+ <nav class="list-pages">
+    <ul>
+        {% for p in paginator.page_range%}
+        <li class="page num">
+            <a href="?page={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endblock %}
+</body>
+</html>
